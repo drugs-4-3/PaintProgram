@@ -73,7 +73,9 @@ public class ColorsPanel extends JPanel {
 
         public void mouseReleased(MouseEvent e) {}
 
-        public void mousePressed(MouseEvent e) {}
+        public void mousePressed(MouseEvent e) {
+            currentColor = color;
+        }
     }
 
 }

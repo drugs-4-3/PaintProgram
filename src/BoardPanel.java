@@ -11,14 +11,18 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 public class BoardPanel extends JPanel {
 
 
     private final int DEFAULT_WIDTH = 600;
     private final int DEDAULT_HEIGHT = 400;
-    private BufferedImage paintImage = new BufferedImage(DEFAULT_WIDTH, DEDAULT_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
+    private BufferedImage imageToSave = new BufferedImage(DEFAULT_WIDTH, DEDAULT_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
+    private BufferedImage imageToLoad = new BufferedImage(DEFAULT_WIDTH, DEDAULT_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
     private Point2D lastPressedPoint = new Point2D.Double();
+    private LinkedList <PaintingComponent> paintingComponents = new LinkedList<>();
+    private boolean isLoadedFile = false;
 
 
     public BoardPanel() {
@@ -27,15 +31,19 @@ public class BoardPanel extends JPanel {
 
 
     private void setImageBackground(Color color) {
-        Graphics g = paintImage.getGraphics();
+        Graphics g = imageToSave.getGraphics();
         g.setColor(color);
         g.fillRect(0, 0, DEFAULT_WIDTH, DEDAULT_HEIGHT);
     }
 
 
     public void saveImage(File file) {
+        Graphics2D g2 = imageToSave.createGraphics();
+        for (PaintingComponent pc : paintingComponents) {
+            pc.draw(g2);
+        }
         try {
-            ImageIO.write(paintImage, "PNG", file);
+            ImageIO.write(imageToSave, "PNG", file);
         } catch (IOException e) {
             // handle the exception
         }
@@ -43,15 +51,35 @@ public class BoardPanel extends JPanel {
 
 
     public void loadImage(File file) throws IOException {
-        paintImage = ImageIO.read(file);
+        isLoadedFile = true;
+        imageToLoad = ImageIO.read(file);
+        paintingComponents.clear();
+        repaint();
+    }
+
+
+    public void clearImage() {
+        paintingComponents.clear();
+        imageToSave.dra
         repaint();
     }
 
 
     @Override
-    public void paintComponent(Graphics g) {
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g); // fixed the bug with displaying copies of buttons
-        g.drawImage(paintImage, 0, 0, null);
+        imageToSave.
+        Graphics2D g2 = imageToSave.createGraphics();
+        if (isLoadedFile) {
+            g2.drawImage(imageToLoad, 0, 0, null);
+        }
+
+        for (PaintingComponent pc : paintingComponents){
+                pc.draw(g2);
+        }
+
+        g2.dispose();
+        g.drawImage(imageToSave, 0, 0, null);
     }
 
 
@@ -63,23 +91,24 @@ public class BoardPanel extends JPanel {
 
     public void drawPoint(Tool t, Color c, Point p) {
         ToolPoint tp = new ToolPoint(t, c, p);
-        Graphics2D g2 = (Graphics2D) paintImage.createGraphics();
-        tp.draw(g2);
-        g2.dispose();
+        paintingComponents.add(tp);
         repaint();
     }
 
 
     public void drawLine(Tool t, Color c, Point p) {
         ToolLine tl = new ToolLine(t, c, p);
-        Graphics2D g2 = (Graphics2D) paintImage.createGraphics();
-        tl.draw(g2);
-        g2.dispose();
+        paintingComponents.add(tl);
         repaint();
     }
 
-    // todo: fucked up abstraction at paintcomponent - use abstract class, don't call every subclass instance independently
-    // (as seen above)
+
+    public void removeLastPaint() {
+        if (!paintingComponents.isEmpty()) {
+            paintingComponents.removeLast();
+        }
+        repaint();
+    }
 
 
     public void setLastPressedPoint(Point2D p) {

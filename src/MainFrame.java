@@ -7,6 +7,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,18 +40,22 @@ public class MainFrame extends JFrame {
 
     private class Menu extends JMenuBar {
         private JMenu fileMenu = new JMenu("File");
+        private JMenu editMenu = new JMenu("Edit");
         private JFileChooser chooser = new JFileChooser();
         private String userDirectory =  System.getProperty("user.home") + "/Desktop";
 
         public Menu() {
             setFileMenu();
+            setEditMenu();
             add(fileMenu);
+            add(editMenu);
             //chooser.setCurrentDirectory(new File(userDirectory));
         }
 
         private void setFileMenu() {
-
+            fileMenu.setMnemonic(KeyEvent.VK_F);
             JMenuItem saveItem = fileMenu.add("Save");
+            saveItem.setMnemonic(KeyEvent.VK_S);
             saveItem.addActionListener(new AbstractAction() {
                 public void actionPerformed(ActionEvent e) {
                     chooser.setSelectedFile(new File("filename.png"));
@@ -61,8 +66,9 @@ public class MainFrame extends JFrame {
                 }
             });
 
-            JMenuItem loadItem = fileMenu.add("Load");
-            loadItem.addActionListener(new AbstractAction() {
+            JMenuItem openItem = fileMenu.add("Open");
+            openItem.setMnemonic(KeyEvent.VK_O);
+            openItem.addActionListener(new AbstractAction() {
                public void actionPerformed(ActionEvent e) {
                    FileNameExtensionFilter filter = new FileNameExtensionFilter("IMAGES", "jpg", "jpeg", "png", "gif");
                    chooser.setFileFilter(filter);
@@ -86,6 +92,28 @@ public class MainFrame extends JFrame {
             exitItem.addActionListener(new AbstractAction() {
                 public void actionPerformed(ActionEvent e) {
                     System.exit(0);
+                }
+            });
+        }
+
+        private void setEditMenu() {
+            editMenu.setMnemonic(KeyEvent.VK_E);
+
+            JMenuItem removeItem = editMenu.add("Remove last");
+            KeyStroke keyStrokeToRemoveLast = KeyStroke.getKeyStroke(KeyEvent.VK_Z, KeyEvent.CTRL_DOWN_MASK);
+            removeItem.setAccelerator(keyStrokeToRemoveLast);
+            removeItem.addActionListener(new AbstractAction() {
+                public void actionPerformed(ActionEvent e) {
+                    mainPanel.removeLast();
+                }
+            });
+
+            JMenuItem clearItem = editMenu.add("Clear");
+            KeyStroke keyStrokeToClear = KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK);
+            clearItem.setAccelerator(keyStrokeToClear);
+            clearItem.addActionListener(new AbstractAction() {
+                public void actionPerformed(ActionEvent e) {
+                    mainPanel.clearImage();
                 }
             });
         }

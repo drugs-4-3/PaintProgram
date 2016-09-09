@@ -36,6 +36,16 @@ public class MainPanel extends JPanel {
     }
 
 
+    public void clearImage() {
+        boardPanel.clearImage();
+    }
+
+
+    public void removeLast() {
+        boardPanel.removeLastPaint();
+    }
+
+
     private class MouseHandler extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
             boardPanel.drawPoint(toolsPanel.getCurrentTool(), colorsPanel.getCurrentColor(), e.getPoint());
