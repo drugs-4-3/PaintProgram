@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.awt.Graphics2D;
 
 public class BoardPanel extends JPanel {
 
@@ -19,7 +20,7 @@ public class BoardPanel extends JPanel {
     private final int DEFAULT_WIDTH = 600;
     private final int DEDAULT_HEIGHT = 400;
     private BufferedImage imageToSave = new BufferedImage(DEFAULT_WIDTH, DEDAULT_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
-    private BufferedImage imageToLoad = new BufferedImage(DEFAULT_WIDTH, DEDAULT_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
+    private BufferedImage loadedImage = new BufferedImage(DEFAULT_WIDTH, DEDAULT_HEIGHT, BufferedImage.TYPE_3BYTE_BGR);
     private Point2D lastPressedPoint = new Point2D.Double();
     private LinkedList <PaintingComponent> paintingComponents = new LinkedList<>();
     private boolean isLoadedFile = false;
@@ -39,9 +40,15 @@ public class BoardPanel extends JPanel {
 
     public void saveImage(File file) {
         Graphics2D g2 = imageToSave.createGraphics();
+        if (isLoadedFile){
+            g2.drawImage(loadedImage, 0, 0, null);
+            //g2.dispose();
+        }
+
         for (PaintingComponent pc : paintingComponents) {
             pc.draw(g2);
         }
+        g2.dispose();
         try {
             ImageIO.write(imageToSave, "PNG", file);
         } catch (IOException e) {
@@ -52,7 +59,7 @@ public class BoardPanel extends JPanel {
 
     public void loadImage(File file) throws IOException {
         isLoadedFile = true;
-        imageToLoad = ImageIO.read(file);
+        loadedImage = ImageIO.read(file);
         paintingComponents.clear();
         repaint();
     }
@@ -60,7 +67,6 @@ public class BoardPanel extends JPanel {
 
     public void clearImage() {
         paintingComponents.clear();
-        imageToSave.dra
         repaint();
     }
 
@@ -68,18 +74,16 @@ public class BoardPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g); // fixed the bug with displaying copies of buttons
-        imageToSave.
-        Graphics2D g2 = imageToSave.createGraphics();
+        Graphics2D g2 = (Graphics2D) g;
         if (isLoadedFile) {
-            g2.drawImage(imageToLoad, 0, 0, null);
+            g2.drawImage(loadedImage, 0, 0, null);
+           // g2.dispose();
         }
 
         for (PaintingComponent pc : paintingComponents){
                 pc.draw(g2);
         }
 
-        g2.dispose();
-        g.drawImage(imageToSave, 0, 0, null);
     }
 
 
