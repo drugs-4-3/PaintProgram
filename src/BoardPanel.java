@@ -66,6 +66,7 @@ public class BoardPanel extends JPanel {
 
 
     public void clearImage() {
+        isLoadedFile = false;
         paintingComponents.clear();
         repaint();
     }
