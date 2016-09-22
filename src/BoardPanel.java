@@ -94,15 +94,15 @@ public class BoardPanel extends JPanel {
     }
 
 
-    public void drawPoint(Tool t, Color c, Point p) {
-        ToolPoint tp = new ToolPoint(t, c, p);
+    public void drawPoint(int thickness , Color c, Point p) {
+        ToolPoint tp = new ToolPoint(thickness, c, p);
         paintingComponents.add(tp);
         repaint();
     }
 
 
-    public void drawLine(Tool t, Color c, Point p) {
-        ToolLine tl = new ToolLine(t, c, p);
+    public void drawLine(int thickness, Color c, Point p) {
+        ToolLine tl = new ToolLine(thickness, c, p);
         paintingComponents.add(tl);
         repaint();
     }
@@ -123,12 +123,12 @@ public class BoardPanel extends JPanel {
 
     private abstract class PaintingComponent {
 
-        protected Tool tool;
+        protected int thickness;
         protected Point2D point;
         protected Color color;
 
-        public PaintingComponent(Tool tool, Color color, Point2D point) {
-            this.tool = tool;
+        public PaintingComponent(int thickness, Color color, Point2D point) {
+            this.thickness = thickness;
             this.color = color;
             this.point = point;
         }
@@ -139,14 +139,14 @@ public class BoardPanel extends JPanel {
 
     private class ToolPoint extends PaintingComponent {
 
-        public ToolPoint(Tool tool, Color color, Point2D point) {
-            super(tool, color, point);
+        public ToolPoint(int thickness, Color color, Point2D point) {
+            super(thickness, color, point);
         }
 
         public void draw(Graphics2D g2) {
-            double centerX = point.getX() - (tool.getRadius())/2;
-            double centerY = point.getY() - (tool.getRadius())/2;
-            Ellipse2D circle = new Ellipse2D.Double(centerX, centerY, tool.getRadius(), tool.getRadius());
+            double centerX = point.getX() - thickness/2;
+            double centerY = point.getY() - thickness/2;
+            Ellipse2D circle = new Ellipse2D.Double(centerX, centerY, thickness, thickness);
             g2.setPaint(color);
             g2.fill(circle);
         }
@@ -157,14 +157,14 @@ public class BoardPanel extends JPanel {
 
         private Line2D line;
 
-        public ToolLine(Tool tool, Color color, Point2D point) {
-            super(tool, color, point);
+        public ToolLine(int thickness, Color color, Point2D point) {
+            super(thickness, color, point);
             line = new Line2D.Double(lastPressedPoint.getX(), lastPressedPoint.getY(), point.getX(), point.getY());
         }
 
         public void draw(Graphics2D g2) {
             g2.setPaint(color);
-            g2.setStroke(new BasicStroke(tool.getRadius()));
+            g2.setStroke(new BasicStroke(thickness));
             g2.draw(line);
         }
     }

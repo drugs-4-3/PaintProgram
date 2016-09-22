@@ -4,48 +4,36 @@
 
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
-public class ToolsPanel extends JPanel {
+public class ToolsPanel extends JPanel implements ChangeListener {
 
-
-    private Tool pencil = new Tool(3);
-    private Tool brush = new Tool(10);
-
-    private Tool currentTool;
-    private final Tool DEFAULT_TOOL = pencil;
+    private final int DEFAULT_THICKNESS = 5;
+    private int thickness = DEFAULT_THICKNESS;
+    private JSlider slider = new JSlider(SwingConstants.VERTICAL, 1, 50, DEFAULT_THICKNESS);
 
 
     public ToolsPanel() {
-        setLayout(new GridLayout(2,1));
+        addSlider(slider);
+    }
 
-        currentTool = DEFAULT_TOOL;
-
-        ToolAction pencilAction = new ToolAction("pencil", pencil);
-        ToolAction brushAction = new ToolAction("brush", brush);
-
-        add(new JButton(pencilAction));
-        add(new JButton(brushAction));
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        thickness = slider.getValue();
     }
 
 
-    public Tool getCurrentTool() {
-        return currentTool;
+    public int getThickness() {
+        return thickness;
     }
 
 
-    private class ToolAction extends AbstractAction {
-
-        public ToolAction(String name, Tool tool) {
-            putValue(Action.NAME, name);
-            putValue(Action.SHORT_DESCRIPTION, "Set tool to " + name);
-            putValue("tool", tool);
-        }
-
-        public void actionPerformed(ActionEvent event) {
-            currentTool = (Tool) getValue("tool");
-        }
+    private void addSlider(JSlider sld) {
+        sld.addChangeListener(this);
+        add(sld);
     }
 
 }

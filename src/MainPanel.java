@@ -48,7 +48,7 @@ public class MainPanel extends JPanel {
 
     private class MouseHandler extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
-            boardPanel.drawPoint(toolsPanel.getCurrentTool(), colorsPanel.getCurrentColor(), e.getPoint());
+            boardPanel.drawPoint(toolsPanel.getThickness(), colorsPanel.getCurrentColor(), e.getPoint());
         }
 
         public void mousePressed(MouseEvent e) {
@@ -59,7 +59,7 @@ public class MainPanel extends JPanel {
 
     private class MouseMotionHandler extends MouseMotionAdapter {
         public void mouseDragged(MouseEvent e){
-            boardPanel.drawLine(toolsPanel.getCurrentTool(), colorsPanel.getCurrentColor(), e.getPoint());
+            boardPanel.drawLine(toolsPanel.getThickness(), colorsPanel.getCurrentColor(), e.getPoint());
             boardPanel.setLastPressedPoint(e.getPoint());
         }
     }
